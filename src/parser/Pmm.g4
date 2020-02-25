@@ -19,10 +19,10 @@ statement:
     expression '=' expression ';'
     | 'print' (expression) (',' (expression))* ';'
     | 'input' (expression) (',' (expression))* ';'
-    | 'if' expression':' ((statement) | '{' (statement)* '}') ('else' ((statement) | '{' (statement)* '}'))?
+    | 'if' expression ':' ((statement) | '{' (statement)* '}') ('else' ((statement) | '{' (statement)* '}'))?
     | 'while' expression ':' ((statement) | '{' (statement)* '}')
     | 'return' expression ';'
-    | ID'('(expression)? (',' (expression))*')' ';'
+    | ID '(' (expression (',' expression)*)? ')' ';'
     ;
 
 expression:
@@ -36,7 +36,7 @@ expression:
     | expression ('+'|'-') expression
     | expression ('>'|'>='|'<'|'<='|'!='|'==') expression
     | expression ('&&'|'||') expression
-    | ID '(' (expression)? (',' (expression)*)? ')'
+    | ID '(' (expression (',' expression)*)? ')'
     | ID
     | REAL_CONSTANT
     | INT_CONSTANT
