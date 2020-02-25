@@ -1,1 +1,16 @@
 .idea
+out
+Pmm.iml
+
+
+#ANTLR files
+src/parser/Pmm.interp
+src/parser/Pmm.tokens
+src/parser/PmmBaseListener.java
+src/parser/PmmBaseVisitor.java
+src/parser/PmmLexer.java
+src/parser/PmmLexer.interp
+src/parser/PmmLexer.tokens
+src/parser/PmmListener.java
+src/parser/PmmParser.java
+src/parser/PmmVisitor.java
