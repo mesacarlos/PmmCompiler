@@ -3,21 +3,21 @@ package ast;
 import java.util.List;
 
 public class Invocation extends AbstractExpression implements Statement {
-	private String name;
+	private Variable name;
 	private List<Expression> parameters;
 	private Definition functionDefinition;
 
-	public Invocation(int line, int column, String name, List<Expression> parameters) {
+	public Invocation(int line, int column, Variable name, List<Expression> parameters) {
 		super(line, column);
 		this.name = name;
 		this.parameters = parameters;
 	}
 
-	public void setName(String name) {
+	public void setName(Variable name) {
 		this.name = name;
 	}
 	
-	public String getName() {
+	public Variable getName() {
 		return name;
 	}
 

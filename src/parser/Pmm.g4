@@ -2,6 +2,7 @@ grammar Pmm;
 
 @header{
 	import ast.*;
+	import ast.error.*;
 	import java.util.*;
 }
 
@@ -17,6 +18,9 @@ definitions returns [List<VarDefinition> varList, List<FuncDefinition> funcList]
     { List<VarDefinition> varList = new ArrayList<VarDefinition>();
 	List<FuncDefinition> funcList = new ArrayList<FuncDefinition>(); }
 	((vardef { for(VarDefinition va : $vardef.ast)
+	    if(varList.contains(va))
+    		new ErrorType(va.getLine(), va.getColumn(), "Variable " + va.getName() + " already defined.");
+    	else
 			varList.add(va); })
 	| (funcdef { funcList.add($funcdef.ast); }))
 	{ $varList = varList; $funcList = funcList; }
@@ -25,8 +29,11 @@ definitions returns [List<VarDefinition> varList, List<FuncDefinition> funcList]
 main returns [FuncDefinition ast]:
     { List<Statement> stList = new ArrayList<Statement>();
 	List<VarDefinition> varList = new ArrayList<VarDefinition>(); }
-	tok='def' mdef='main' '(' '):' '{'
+	tok='def' mdef='main' '(' ')' ':' '{'
 	(vardef { for(VarDefinition va : $vardef.ast)
+	    if(varList.contains(va))
+    		new ErrorType(va.getLine(), va.getColumn(), "Variable " + va.getName() + " already defined.");
+    	else
 			varList.add(va); })*
 	(statement {stList.addAll($statement.ast);})* '}' EOF
 	{ $ast = new FuncDefinition($mdef.getLine(), $mdef.getCharPositionInLine()+1, new FuncType($mdef.getLine(), $mdef.getCharPositionInLine()+1, ast.Void.getInstance(), new ArrayList<VarDefinition>()), $mdef.text, varList, stList); }
@@ -51,7 +58,7 @@ statement returns [List<Statement> ast]:
     | { List<Statement> listaReturn = new ArrayList<Statement>();
     List<Statement> listaif = new ArrayList<Statement>();
     List<Statement> listaelse = new ArrayList<Statement>(); }
-    tok='if' cond=expression':' ((st1=statement {listaif.addAll($st1.ast);}) | '{' (st2=statement {listaif.addAll($st2.ast);})* '}')
+    tok='if' cond=expression ':' ((st1=statement {listaif.addAll($st1.ast);}) | '{' (st2=statement {listaif.addAll($st2.ast);})* '}')
         ('else' ((st3=statement {listaelse.addAll($st3.ast);}) | '{' (st4=statement {listaelse.addAll($st4.ast);})* '}'))?
     { listaReturn.add(new IfElse($tok.getLine(), $tok.getCharPositionInLine()+1, $cond.ast, listaif, listaelse));
      $ast = listaReturn; }
@@ -69,7 +76,7 @@ statement returns [List<Statement> ast]:
 	| { List<Statement> listaReturn = new ArrayList<Statement>();
 	List<Expression> params = new ArrayList<Expression>(); }
 	ID '(' (ex1=expression { params.add($ex1.ast); } (',' ex2=expression { params.add($ex2.ast); })*)? ')' ';'
-    { listaReturn.add(new Invocation($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text, params));
+    { listaReturn.add(new Invocation($ID.getLine(), $ID.getCharPositionInLine()+1, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text), params));
     $ast = listaReturn; }
 	;
 
@@ -106,7 +113,7 @@ expression returns [Expression ast]:
 
 	| { List<Expression> params = new ArrayList<Expression>(); }
 	ID '(' (ex1=expression { params.add($ex1.ast); } (',' ex2=expression { params.add($ex2.ast); })*)? ')'
-	{ $ast = new Invocation($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text, params); }
+	{ $ast = new Invocation($ID.getLine(), $ID.getCharPositionInLine()+1, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text), params); }
 
 	| ID
 	{ $ast = new Variable($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text); }
@@ -138,8 +145,11 @@ funcdef returns [FuncDefinition ast]:
     'def' nom=ID '(' ((param=ID':' paramType=tipo
         { listaParametros.add(new VarDefinition($param.getLine(), $param.getCharPositionInLine()+1, $paramType.ast, $param.text)); })
         (',' params=ID':' paramsType=tipo
-            { listaParametros.add(new VarDefinition($params.getLine(), $params.getCharPositionInLine()+1, $paramsType.ast, $params.text)); })*)? '):' returnType=tipo? '{'
+            { listaParametros.add(new VarDefinition($params.getLine(), $params.getCharPositionInLine()+1, $paramsType.ast, $params.text)); })*)? ')' ':' returnType=tipo? '{'
             (vardef { for(VarDefinition va : $vardef.ast)
+                        if(varDefList.contains(va))
+                            new ErrorType(va.getLine(), va.getColumn(), "Variable " + va.getName() + " already defined.");
+                        else
                             varDefList.add(va); })*
             (statement { statementList.addAll($statement.ast); })* '}'
             { if($returnType.ctx == null)
@@ -151,8 +161,14 @@ funcdef returns [FuncDefinition ast]:
 tipo returns [Type ast]:
 	{ List<FieldDefinition> lista = new ArrayList<FieldDefinition>(); }
 		tok='struct' '{' (vardef {
-		for(VarDefinition va : $vardef.ast)
-			lista.add(new FieldDefinition(va.getLine(), va.getColumn(), va.getType(), va.getName())); }
+		    for(VarDefinition va : $vardef.ast){
+		        FieldDefinition campo = new FieldDefinition(va.getLine(), va.getColumn(), va.getType(), va.getName());
+		            if(lista.contains(campo))
+                        new ErrorType(va.getLine(), va.getColumn(), "Field " + va.getName() + " already defined.");
+                    else
+                        lista.add(campo);
+		    }
+	    }
 		)* '}'
 		{ $ast = new Struct($tok.getLine(), $tok.getCharPositionInLine()+1, lista); }
 

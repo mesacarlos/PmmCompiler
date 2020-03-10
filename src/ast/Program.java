@@ -1,31 +1,24 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Program extends AbstractASTNode {
-	private List<VarDefinition> varDefinitions;
-	private List<FuncDefinition> funcDefinitions;
+	private List<Definition> definitions;
 
 	public Program(int line, int column, List<VarDefinition> varDefinitions, List<FuncDefinition> funcDefinitions) {
 		super(line, column);
-		this.varDefinitions = varDefinitions;
-		this.funcDefinitions = funcDefinitions;
+		this.definitions = new ArrayList<Definition>();
+		this.definitions.addAll(varDefinitions);
+		this.definitions.addAll(funcDefinitions);
 	}
 
-	public List<VarDefinition> getVarDefinitions() {
-		return varDefinitions;
+	public void setDefinitions(List<Definition> definitions) {
+		this.definitions = definitions;
 	}
 
-	public void setVarDefinitions(List<VarDefinition> varDefinitions) {
-		this.varDefinitions = varDefinitions;
-	}
-
-	public List<FuncDefinition> getFuncDefinitions() {
-		return funcDefinitions;
-	}
-
-	public void setFuncDefinitions(List<FuncDefinition> funcDefinitions) {
-		this.funcDefinitions = funcDefinitions;
+	public List<Definition> getDefinitions() {
+		return definitions;
 	}
 
 }

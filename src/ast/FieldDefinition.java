@@ -1,5 +1,7 @@
 package ast;
 
+import java.lang.reflect.Field;
+
 public class FieldDefinition extends AbstractDefinition {
 	private int offset;
 
@@ -26,6 +28,18 @@ public class FieldDefinition extends AbstractDefinition {
 		return 0;
 	}
 
-
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FieldDefinition other = (FieldDefinition) obj;
+		if (!getName().equals(other.getName()))
+			return false;
+		return true;
+	}
 
 }
