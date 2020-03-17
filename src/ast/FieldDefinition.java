@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 import java.lang.reflect.Field;
 
 public class FieldDefinition extends AbstractDefinition {
@@ -42,4 +44,8 @@ public class FieldDefinition extends AbstractDefinition {
 		return true;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

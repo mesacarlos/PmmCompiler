@@ -2,6 +2,7 @@ package ast.error;
 
 import ast.AbstractType;
 import ast.Type;
+import ast.visitor.Visitor;
 
 public class ErrorType extends AbstractType implements Type {
 	private String message;
@@ -18,6 +19,11 @@ public class ErrorType extends AbstractType implements Type {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
 	}
 
 	@Override

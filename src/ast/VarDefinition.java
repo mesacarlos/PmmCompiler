@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class VarDefinition extends AbstractDefinition {
 	private int offset;
 	private int scope;
@@ -46,4 +48,8 @@ public class VarDefinition extends AbstractDefinition {
 		return true;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

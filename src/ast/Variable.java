@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class Variable extends AbstractExpression {
 	private String name;
 	private Definition definition;
@@ -25,4 +27,8 @@ public class Variable extends AbstractExpression {
 		this.definition = definition;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

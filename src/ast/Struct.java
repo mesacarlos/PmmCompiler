@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 import java.util.List;
 
 public class Struct extends AbstractType {
@@ -18,4 +20,8 @@ public class Struct extends AbstractType {
 		return fieldDefinitions;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

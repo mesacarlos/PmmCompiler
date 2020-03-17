@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class ArrayAccess extends AbstractExpression {
 	private Expression position;
 	private Expression array;
@@ -26,4 +28,8 @@ public class ArrayAccess extends AbstractExpression {
 		return array;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

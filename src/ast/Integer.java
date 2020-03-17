@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class Integer extends AbstractType{
 	private static Integer instance;
 	
@@ -13,4 +15,8 @@ public class Integer extends AbstractType{
 		return instance;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

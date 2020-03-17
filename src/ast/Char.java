@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class Char extends AbstractType{
 	private static Char instance;
 
@@ -13,4 +15,8 @@ public class Char extends AbstractType{
 		return instance;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

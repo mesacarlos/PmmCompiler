@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 import java.util.List;
 
 public class Invocation extends AbstractExpression implements Statement {
@@ -36,5 +38,9 @@ public class Invocation extends AbstractExpression implements Statement {
 	public Definition getDefinition() {
 		return functionDefinition;
 	}
-	
+
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

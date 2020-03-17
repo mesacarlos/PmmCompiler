@@ -1,4 +1,6 @@
 import ast.error.ErrorHandler;
+import ast.visitor.LValueVisitor;
+import ast.visitor.Visitor;
 import parser.*;
 
 import org.antlr.v4.runtime.*;
@@ -14,7 +16,7 @@ public class Main {
 		        System.err.println("Please, pass me the input file.");
 		        return;
 		    }
-		   		 			
+		 //args[0] = "test.input.txt";
 		 // create a lexer that feeds off of input CharStream
 		CharStream input = CharStreams.fromFileName(args[0]);
 		PmmLexer lexer = new PmmLexer(input);
@@ -23,6 +25,8 @@ public class Main {
 		CommonTokenStream tokens = new CommonTokenStream(lexer); 
 		PmmParser parser = new PmmParser(tokens);	
 		Program ast = parser.program().ast;
+		Visitor lValueVisitor = new LValueVisitor();
+		ast.accept(lValueVisitor, null);
 		
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){

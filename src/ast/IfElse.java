@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 import java.util.List;
 
 public class IfElse extends AbstractStatement {
@@ -38,4 +40,8 @@ public class IfElse extends AbstractStatement {
 		return sentencesElse;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

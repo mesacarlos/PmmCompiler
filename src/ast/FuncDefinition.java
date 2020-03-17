@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 import java.util.List;
 
 public class FuncDefinition extends AbstractDefinition {
@@ -39,4 +41,8 @@ public class FuncDefinition extends AbstractDefinition {
 		return 0;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }

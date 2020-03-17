@@ -1,5 +1,7 @@
 package ast;
 
+import ast.visitor.Visitor;
+
 public class UnaryNot extends AbstractExpression{
 	private Expression expression;
 
@@ -16,4 +18,8 @@ public class UnaryNot extends AbstractExpression{
 		return expression;
 	}
 
+	@Override
+	public Object accept(Visitor v, Object params) {
+		return v.visit(this, params);
+	}
 }
