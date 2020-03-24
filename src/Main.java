@@ -1,4 +1,5 @@
 import ast.error.ErrorHandler;
+import ast.visitor.IdentificationVisitor;
 import ast.visitor.LValueVisitor;
 import ast.visitor.Visitor;
 import parser.*;
@@ -25,8 +26,10 @@ public class Main {
 		CommonTokenStream tokens = new CommonTokenStream(lexer); 
 		PmmParser parser = new PmmParser(tokens);	
 		Program ast = parser.program().ast;
-		Visitor lValueVisitor = new LValueVisitor();
-		ast.accept(lValueVisitor, null);
+
+		//Visitors
+		ast.accept(new IdentificationVisitor(), null);
+		ast.accept(new LValueVisitor(), null);
 		
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){

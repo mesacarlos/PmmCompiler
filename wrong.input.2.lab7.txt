@@ -1,6 +1,0 @@
-# Lvalue required
-
-def main():{
-	i:int;	
-	input i+2;
-}

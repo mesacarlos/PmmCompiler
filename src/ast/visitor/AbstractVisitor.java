@@ -116,7 +116,7 @@ public abstract class AbstractVisitor implements Visitor{
 
 	@Override
 	public Object visit(Invocation obj, Object params) {
-		//TODO es posible que aquí falte visitar la variable ??
+		obj.getName().accept(this, params);
 		for(Expression e : obj.getParameters())
 			e.accept(this, params);
 		return null;
