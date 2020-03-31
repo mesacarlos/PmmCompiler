@@ -1,5 +1,6 @@
 package ast;
 
+import ast.error.ErrorType;
 import ast.visitor.Visitor;
 
 public class Char extends AbstractType{
@@ -13,6 +14,22 @@ public class Char extends AbstractType{
 		if(instance == null)
 			instance = new Char(0, 0);
 		return instance;
+	}
+
+	public Type promotesTo(Type type){
+		if(type.equals(Char.getInstance()) || type instanceof ErrorType)
+			return type;
+		return null;
+	}
+
+	public boolean isBuiltInType(){
+		return true;
+	}
+
+	public Type canBeCastTo(Type type){
+		if(type.equals(Integer.getInstance()))
+			return type;
+		return null;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package ast;
 
+import ast.error.ErrorType;
 import ast.visitor.Visitor;
 
 public class Array extends AbstractType {
@@ -26,6 +27,12 @@ public class Array extends AbstractType {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public Type squareBrackets(Type typeOfBrackets){
+		if(typeOfBrackets.equals(Integer.getInstance()))
+			return type; //Returns the array type
+		return null;
 	}
 
 	@Override

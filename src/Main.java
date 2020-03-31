@@ -1,7 +1,6 @@
 import ast.error.ErrorHandler;
 import ast.visitor.IdentificationVisitor;
-import ast.visitor.LValueVisitor;
-import ast.visitor.Visitor;
+import ast.visitor.TypeCheckingVisitor;
 import parser.*;
 
 import org.antlr.v4.runtime.*;
@@ -13,12 +12,12 @@ import introspector.view.IntrospectorTree;
 public class Main {
 	
 	public static void main(String... args) throws Exception {
-		   if (args.length<1) {
-		        System.err.println("Please, pass me the input file.");
+		if (args.length<1) {
+			System.err.println("Please, pass me the input file.");
 		        return;
-		    }
-		 //args[0] = "test.input.txt";
-		 // create a lexer that feeds off of input CharStream
+		}
+		//args[0] = "test.input.txt";
+		// create a lexer that feeds off of input CharStream
 		CharStream input = CharStreams.fromFileName(args[0]);
 		PmmLexer lexer = new PmmLexer(input);
 
@@ -29,14 +28,13 @@ public class Main {
 
 		//Visitors
 		ast.accept(new IdentificationVisitor(), null);
-		ast.accept(new LValueVisitor(), null);
+		ast.accept(new TypeCheckingVisitor(), null);
 		
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){
 			// * Show errors
 			ErrorHandler.getInstance().showErrors(System.err);
-		}
-		else{			
+		}else{
 			// * The AST is shown
 			IntrospectorModel model=new IntrospectorModel("Program", ast);
 			new IntrospectorTree("Introspector", model);

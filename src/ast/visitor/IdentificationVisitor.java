@@ -33,7 +33,7 @@ public class IdentificationVisitor extends AbstractVisitor{
     public Object visit(Variable obj, Object params) {
         Definition def = st.find(obj.getName());
         if(def == null)
-            new ErrorType(obj.getLine(), obj.getColumn(), "[Identification] No se ha encontrado la variable o funcion " + obj.getName());
+            obj.setDefinition(new VarDefinition(obj.getLine(), obj.getColumn(), new ErrorType(obj.getLine(), obj.getColumn(), "[Identification] No se ha encontrado la variable o funcion " + obj.getName()), obj.getName()));
         else
             obj.setDefinition(def);
         return null;

@@ -7,7 +7,6 @@ import java.util.List;
 public class Invocation extends AbstractExpression implements Statement {
 	private Variable name;
 	private List<Expression> parameters;
-	private Definition functionDefinition;
 
 	public Invocation(int line, int column, Variable name, List<Expression> parameters) {
 		super(line, column);
@@ -29,14 +28,6 @@ public class Invocation extends AbstractExpression implements Statement {
 
 	public List<Expression> getParameters() {
 		return parameters;
-	}
-
-	public void setDefinition(Definition def) {
-		this.functionDefinition = def;
-	}
-	
-	public Definition getDefinition() {
-		return functionDefinition;
 	}
 
 	@Override

@@ -20,6 +20,14 @@ public class Struct extends AbstractType {
 		return fieldDefinitions;
 	}
 
+	public Type dot(String string){
+		for(FieldDefinition field : fieldDefinitions){
+			if(field.getName().equals(string))
+				return field.getType();
+		}
+		return null;
+	}
+
 	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);

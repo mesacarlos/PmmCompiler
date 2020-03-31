@@ -30,6 +30,16 @@ public class FuncType extends AbstractType {
 		this.varDefinitions = varDefinitions;
 	}
 
+	public Type parenthesis(List<Expression> args){
+		if(args.size() != varDefinitions.size())
+			return null;
+		for(int i = 0; i < args.size(); i++){
+			if(args.get(i).getType().promotesTo(varDefinitions.get(i).getType()) == null)
+				return null;
+		}
+		return type;
+	}
+
 	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);
