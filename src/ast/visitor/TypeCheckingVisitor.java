@@ -146,6 +146,8 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		obj.getExpression().accept(this, params);
 
 		//TODO Esto se hace en la próxima clase
+		//TODO. En el return solo se permiten tipos simples
+		//TODO Si ponemos a la derecha de una asignacion una invocacion a una funcion void... Que se asigna? Se considera que void no es tipo simple o...
 		return null;
 	}
 
