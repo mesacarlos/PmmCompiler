@@ -146,8 +146,10 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		obj.getExpression().accept(this, params);
 
 		//TODO Esto se hace en la próxima clase
-		//TODO. En el return solo se permiten tipos simples
-		//TODO Si ponemos a la derecha de una asignacion una invocacion a una funcion void... Que se asigna? Se considera que void no es tipo simple o...
+		//TODO En el return solo se permiten tipos simples
+		//TODO El tipo del return debe coincidir con el de retorno de la funcion
+		//TODO IMPORTANTE: ES OBLIGATORIO QUE LAS FUNCIONES TENGAN TIPO DE RETORNO (salvo main)? Porque en el input.txt hay una funcion sin tipo de retorno, y en el input del lab 4 tambien...
+		//	Si ponemos a la derecha de una asignacion una invocacion a una funcion void... Que se asigna?
 		return null;
 	}
 
