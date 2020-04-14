@@ -70,4 +70,9 @@ public abstract class AbstractType extends AbstractASTNode implements Type{
 		return null;
 	}
 
+	public int numberOfBytes(){
+		new ErrorType(0, 0, "Se ha consultado el tamaño en bytes de un tipo no simple.");
+		return 0;
+	}
+
 }

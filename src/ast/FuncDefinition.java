@@ -7,6 +7,8 @@ import java.util.List;
 public class FuncDefinition extends AbstractDefinition {
 	private List<VarDefinition> variables;
 	private List<Statement> sentences;
+	private int totalBytesLocales;
+	private int totalBytesParams;
 
 	public FuncDefinition(int line, int column, FuncType type, String name, List<VarDefinition> variables, List<Statement> sentences) {
 		super(line, column, type, name);
@@ -28,6 +30,22 @@ public class FuncDefinition extends AbstractDefinition {
 
 	public List<Statement> getSentences() {
 		return sentences;
+	}
+
+	public void setTotalBytesLocales(int bytes){
+		this.totalBytesLocales = bytes;
+	}
+
+	public int getTotalBytesLocales(){
+		return totalBytesLocales;
+	}
+
+	public void setTotalBytesParams(int bytes){
+		this.totalBytesParams = bytes;
+	}
+
+	public int getTotalBytesParams(){
+		return totalBytesParams;
 	}
 
 	@Override

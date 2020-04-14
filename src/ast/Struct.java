@@ -28,6 +28,13 @@ public class Struct extends AbstractType {
 		return null;
 	}
 
+	public int numberOfBytes(){
+		int sumaBytes = 0;
+		for(FieldDefinition fd : getFieldDefinitions())
+			sumaBytes += fd.getType().numberOfBytes();
+		return sumaBytes;
+	}
+
 	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);

@@ -1,6 +1,0 @@
-i, j, i:int; # Error: duplicated variable
-k : int;
-# Main program
-def main(): {
-	i = 0;
-}

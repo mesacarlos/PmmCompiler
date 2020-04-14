@@ -35,6 +35,10 @@ public class Array extends AbstractType {
 		return null;
 	}
 
+	public int numberOfBytes(){
+		return getType().numberOfBytes() * getSize();
+	}
+
 	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);

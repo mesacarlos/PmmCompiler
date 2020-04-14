@@ -54,7 +54,6 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		obj.setType(obj.getExpression().getType().canBeCastTo(obj.getCastType()));
 		if(obj.getType() == null)
 			obj.setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] Esta expresión no puede castear al tipo indicado."));
-		//TODO En input.txt se hace un cast de double a char.. pero MAPL no lo permite.. deberia dejarlo pasar aquí?
 		return null;
 	}
 
@@ -78,6 +77,16 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		obj.setType(obj.getExpr().getType().dot(obj.getField()));
 		if(obj.getType() == null)
 			obj.setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] No existe el campo indicado."));
+		return null;
+	}
+
+	@Override
+	public Object visit(FuncDefinition obj, Object params) {
+		obj.getType().accept(this, params);
+		for(VarDefinition v : obj.getVariables())
+			v.accept(this, params);
+		for(Statement s : obj.getSentences())
+			s.accept(this, obj.getType());
 		return null;
 	}
 
@@ -145,11 +154,14 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 	public Object visit(Return obj, Object params) {
 		obj.getExpression().accept(this, params);
 
-		//TODO Esto se hace en la próxima clase
-		//TODO En el return solo se permiten tipos simples
-		//TODO El tipo del return debe coincidir con el de retorno de la funcion
-		//TODO IMPORTANTE: ES OBLIGATORIO QUE LAS FUNCIONES TENGAN TIPO DE RETORNO (salvo main)? Porque en el input.txt hay una funcion sin tipo de retorno, y en el input del lab 4 tambien...
-		//	Si ponemos a la derecha de una asignacion una invocacion a una funcion void... Que se asigna?
+		FuncType funcType = (FuncType)params;
+
+		if(obj.getExpression().getType().promotesTo(funcType.getType()) == null)
+			obj.getExpression().setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] El tipo de retorno no coincide con el definido en la funcion."));
+
+		if(!obj.getExpression().getType().isBuiltInType())
+			obj.getExpression().setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] El tipo de retorno debe ser un tipo simple."));
+
 		return null;
 	}
 

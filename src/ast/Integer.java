@@ -57,9 +57,13 @@ public class Integer extends AbstractType{
 	}
 
 	public Type canBeCastTo(Type type){
-		if(type.equals(Char.getInstance()) || type.equals(Real.getInstance()))
+		if(type.equals(Integer.getInstance()) || type.equals(Real.getInstance()) || type.equals(Char.getInstance()))
 			return type;
 		return null;
+	}
+
+	public int numberOfBytes(){
+		return 2;
 	}
 
 	@Override

@@ -43,9 +43,13 @@ public class Real extends AbstractType{
 	}
 
 	public Type canBeCastTo(Type type){
-		if(type.equals(Integer.getInstance()))
+		if(type.equals(Integer.getInstance()) || type.equals(Real.getInstance()) || type.equals(Char.getInstance()))
 			return type;
 		return null;
+	}
+
+	public int numberOfBytes(){
+		return 4;
 	}
 
 	@Override

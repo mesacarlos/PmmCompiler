@@ -1,6 +1,7 @@
 import ast.error.ErrorHandler;
 import ast.visitor.IdentificationVisitor;
 import ast.visitor.TypeCheckingVisitor;
+import ast.visitor.codegenerator.OffsetVisitor;
 import parser.*;
 
 import org.antlr.v4.runtime.*;
@@ -29,6 +30,14 @@ public class Main {
 		//Visitors
 		ast.accept(new IdentificationVisitor(), null);
 		ast.accept(new TypeCheckingVisitor(), null);
+
+		//Si hay errores en este punto, paramos. Si no, generamos codigo
+		if(ErrorHandler.getInstance().hasErrors()){
+			ErrorHandler.getInstance().showErrors(System.err);
+			return;
+		}
+
+		ast.accept(new OffsetVisitor(), null);
 		
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){

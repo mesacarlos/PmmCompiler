@@ -116,4 +116,12 @@ public interface Type extends ASTNode{
      * @return Function return type if parameters correct, null otherwise
      */
     Type parenthesis(List<Expression> args);
+
+    /**
+     * Get bytes required by this type
+     *
+     * Implemented in: Integer, Real, Char, Array, Struct
+     * @return number of bytes used by this type
+     */
+    int numberOfBytes();
 }
