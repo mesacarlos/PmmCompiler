@@ -38,7 +38,7 @@ public class Char extends AbstractType{
 
 	@Override
 	public String suffix() {
-		return "c";
+		return "b";
 	}
 
 	@Override

@@ -13,6 +13,18 @@ public class LexerHelper {
 	}
 
 	public static char lexemeToChar(String text) {
+		if(text.startsWith("'\\")){
+			//Si empieza con barra puede ser \n o \t o \\ascii
+			if(text.equals("'\\n'"))
+				return '\n';
+			if(text.equals("'\\t'"))
+				return '\t';
+			int codigoAscii = Integer.parseInt(text.replaceAll("\\D+", ""));
+			return (char)codigoAscii;
+		}else
+			return text.charAt(1); //Si no empieza con \ es un caracter 'x'
+
+		/*
 		try {
 			text = text.replace("'", "");
 
@@ -34,6 +46,7 @@ public class LexerHelper {
 			System.out.println(e);
 		}
 		return (char)0;
+		*/
 	}
 
 	public static Double lexemeToReal(String text) {

@@ -1,26 +1,38 @@
 package ast.visitor.codegenerator;
 
 import ast.*;
+import ast.Integer;
 
 //Expressions
 public class ValueCGVisitor extends AbstractCGVisitor{
+	private CodeGenerator cg;
+	private AddressCGVisitor addressCGVisitor;
+
+	public ValueCGVisitor(CodeGenerator cg){
+		this.cg = cg;
+		this.addressCGVisitor = new AddressCGVisitor(cg, this);
+	}
+
 	/**
 	 *value [[ Arithmetic : expression -> expression expression ]]() =
 	 * 	value[[expression1]]
 	 * 	value[[expression2]]
 	 * 	if(obj.getOperator.equals("+"))
-	 * 		<add>
+	 * 		<add>arithmetic.getType().suffix()
 	 * 	if(obj.getOperator.equals("-"))
-	 * 		<sub>
+	 * 		<sub>arithmetic.getType().suffix()
 	 * 	if(obj.getOperator.equals("*"))
-	 * 		<mul>
+	 * 		<mul>arithmetic.getType().suffix()
 	 * 	if(obj.getOperator.equals("/"))
-	 * 		<div>
+	 * 		<div>arithmetic.getType().suffix()
 	 *
 	 */
 	@Override
 	public Object visit(Arithmetic obj, Object params) {
-		throw new IllegalStateException();
+		obj.getLeft().accept(this, params);
+		obj.getRight().accept(this, params);
+		cg.arithmetic(obj.getOperator(), obj.getType());
+		return null;
 	}
 
 	/**
@@ -31,7 +43,9 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(ArrayAccess obj, Object params) {
-		throw new IllegalStateException();
+		obj.accept(addressCGVisitor, params);
+		cg.load(obj.getType());
+		return null;
 	}
 
 	/**
@@ -44,7 +58,9 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(Cast obj, Object params) {
-		throw new IllegalStateException();
+		obj.getExpression().accept(this, params);
+		cg.convertTo(obj.getExpression().getType(), obj.getCastType());
+		return null;
 	}
 
 	/**
@@ -54,7 +70,8 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(CharLiteral obj, Object params) {
-		throw new IllegalStateException();
+		cg.push(obj.getType(), obj.getValue());
+		return null;
 	}
 
 	/**
@@ -62,22 +79,25 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 * 	value[[expression1]]
 	 * 	value[[expression2]]
 	 * 	if(comparison.getOperator().equals(">"))
-	 * 		<gt>
+	 * 		<gt>arithmetic.getType().suffix()
 	 * 	if(comparison.getOperator().equals(">="))
-	 * 		<ge>
+	 * 		<ge>arithmetic.getType().suffix()
 	 * 	if(comparison.getOperator().equals("<"))
-	 * 		<lt>
+	 * 		<lt>arithmetic.getType().suffix()
 	 * 	if(comparison.getOperator().equals("<="))
-	 * 		<le>
+	 * 		<le>arithmetic.getType().suffix()
 	 * 	if(comparison.getOperator().equals("=="))
-	 * 		<eq>
+	 * 		<eq>arithmetic.getType().suffix()
 	 * 	if(comparison.getOperator().equals("!="))
-	 * 		<ne>
+	 * 		<ne>arithmetic.getType().suffix()
 	 *
 	 */
 	@Override
 	public Object visit(Comparison obj, Object params) {
-		throw new IllegalStateException();
+		obj.getLeft().accept(this, params);
+		obj.getRight().accept(this, params);
+		cg.comparison(obj.getOperator(), obj.getType());
+		return null;
 	}
 
 	/**
@@ -85,11 +105,12 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 * 	address[[FieldAccess]]
 	 * 	<load>fieldAccess.getType().suffix()
 	 *
-	 *
 	 */
 	@Override
 	public Object visit(FieldAccess obj, Object params) {
-		throw new IllegalStateException();
+		obj.accept(addressCGVisitor, params);
+		cg.load(obj.getType());
+		return null;
 	}
 
 	/**
@@ -99,7 +120,8 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(IntLiteral obj, Object params) {
-		throw new IllegalStateException();
+		cg.push(obj.getType(), obj.getValue());
+		return null;
 	}
 
 	/**
@@ -125,7 +147,10 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(Logical obj, Object params) {
-		throw new IllegalStateException();
+		obj.getLeft().accept(this, params);
+		obj.getRight().accept(this, params);
+		cg.logic(obj.getOperator());
+		return null;
 	}
 
 	/**
@@ -135,7 +160,8 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(RealLiteral obj, Object params) {
-		throw new IllegalStateException();
+		cg.push(obj.getType(), obj.getValue());
+		return null;
 	}
 
 	/**
@@ -150,7 +176,10 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(UnaryMinus obj, Object params) {
-		throw new IllegalStateException();
+		cg.push(obj.getExpression().getType(), 0); //El tipo de la expresion sera Integer o Real ya de por si...
+		obj.getExpression().accept(this, params);
+		cg.sub(obj.getExpression().getType());
+		return null;
 	}
 
 	/**
@@ -161,7 +190,9 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(UnaryNot obj, Object params) {
-		throw new IllegalStateException();
+		obj.getExpression().accept(this, params);
+		cg.not();
+		return null;
 	}
 
 	/**
@@ -172,7 +203,9 @@ public class ValueCGVisitor extends AbstractCGVisitor{
 	 */
 	@Override
 	public Object visit(Variable obj, Object params) {
-		throw new IllegalStateException();
+		obj.accept(addressCGVisitor, params);
+		cg.load(obj.getType());
+		return null;
 	}
 
 }

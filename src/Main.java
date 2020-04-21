@@ -1,6 +1,8 @@
 import ast.error.ErrorHandler;
 import ast.visitor.IdentificationVisitor;
 import ast.visitor.TypeCheckingVisitor;
+import ast.visitor.codegenerator.CodeGenerator;
+import ast.visitor.codegenerator.ExecuteCGVisitor;
 import ast.visitor.codegenerator.OffsetVisitor;
 import parser.*;
 
@@ -38,6 +40,10 @@ public class Main {
 		}
 
 		ast.accept(new OffsetVisitor(), null);
+
+		//Generacion de código
+		CodeGenerator cg = new CodeGenerator("output.txt", args[0]);
+		ast.accept(new ExecuteCGVisitor(cg), null);
 		
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){
