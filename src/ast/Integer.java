@@ -67,6 +67,12 @@ public class Integer extends AbstractType{
 	}
 
 	@Override
+	public String suffix() {
+		return "i";
+	}
+
+
+	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);
 	}

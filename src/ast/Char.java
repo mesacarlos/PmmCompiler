@@ -37,6 +37,11 @@ public class Char extends AbstractType{
 	}
 
 	@Override
+	public String suffix() {
+		return "c";
+	}
+
+	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);
 	}

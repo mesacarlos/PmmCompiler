@@ -53,6 +53,11 @@ public class Real extends AbstractType{
 	}
 
 	@Override
+	public String suffix() {
+		return "f";
+	}
+
+	@Override
 	public Object accept(Visitor v, Object params) {
 		return v.visit(this, params);
 	}

@@ -37,7 +37,7 @@ public class OffsetVisitor extends AbstractVisitor {
 			sumaParametrosDerecha += obj.getVarDefinitions().get(i).getType().numberOfBytes();
 		}
 		FuncDefinition fun = (FuncDefinition) params;
-		fun.setTotalBytesParams(sumaParametrosDerecha);
+		fun.setTotalBytesParams(sumaParametrosDerecha-4);
 		return null;
 	}
 

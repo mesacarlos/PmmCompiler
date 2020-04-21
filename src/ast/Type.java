@@ -124,4 +124,12 @@ public interface Type extends ASTNode{
      * @return number of bytes used by this type
      */
     int numberOfBytes();
+
+    /**
+     * Get MAPL suffix for this type
+     *
+     * Implemented in: Integer, Real, Char
+     * @return i for Integer, f for Real, c for Char
+     */
+    String suffix();
 }
