@@ -19,7 +19,7 @@ public class Main {
 			System.err.println("Please, pass me the input file.");
 		        return;
 		}
-		//args[0] = "test.input.txt";
+		//args[0] = "labExamen.input.txt";
 		// create a lexer that feeds off of input CharStream
 		CharStream input = CharStreams.fromFileName(args[0]);
 		PmmLexer lexer = new PmmLexer(input);

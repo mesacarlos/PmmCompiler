@@ -2,6 +2,7 @@ package ast.visitor.codegenerator;
 
 import ast.*;
 import ast.Integer;
+import ast.Void;
 
 import static java.lang.Math.abs;
 
@@ -60,7 +61,7 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 		cg.label(obj.getName());
 		cg.enter(abs(obj.getTotalBytesLocales()));
 		for(Statement stm : obj.getSentences())
-			stm.accept(this, params);
+			stm.accept(this, obj);
 
 		FuncType funcType = (FuncType)obj.getType();
 		if(funcType.getType().equals(ast.Void.getInstance()))
@@ -70,18 +71,33 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 
 	/**
 	 *execute [[ IfElse : statement -> expression sentencesIf* sentencesElse* ]]() =
-	 * 	<label>"if"
+	 * int numLabel = cg.getLabel();
 	 * 	value[[expression]]
-	 * 	<jz> "else"
-	 * 	execute[[sentencesIf*]]
-	 * 	<label>"else"
-	 *	execute[[sentencesElse*]]
-	 * 	<label>"end"
+	 * 	<jz> "else"+numLabel
+	 * 	for(Statement stm : sentencesIf*)
+	 * 		execute[[stm]]
+	 * 	<jmp> "end"+numLabel
+	 * 	<label>"else"+numLabel
+	 * 	for(Statement stm : sentencesElse*)
+	 *		execute[[stm]]
+	 * 	<label>"end"+numLabel
 	 *
 	 */
 	@Override
 	public Object visit(IfElse obj, Object params) {
-		throw new IllegalStateException();
+		int numLabel = cg.getLabel();
+		obj.getCondition().accept(valueCGVisitor, params);
+		cg.jz("else" + numLabel);
+		for(Statement stm : obj.getSentencesIf()){
+			stm.accept(this, params);
+		}
+		cg.jmp("ifEnd" + numLabel);
+		cg.label("else" + numLabel);
+		for(Statement stm : obj.getSentencesElse()){
+			stm.accept(this, params);
+		}
+		cg.label("ifEnd" + numLabel);
+		return null;
 	}
 
 	/**
@@ -101,12 +117,19 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 	}
 
 	/**
-	 *
+	 *execute [[Invocation : statement -> expression expression*]]() =
+	 * 	value[[(Expression)statement]]()
+	 * 	if(((Expression)statement).type instanceof Void == false)
+	 * 		<pop> ((Expression)statement).type.suffix
 	 *
 	 */
 	@Override
 	public Object visit(Invocation obj, Object params) {
-		throw new IllegalStateException();
+		Expression invocationAsExpr = (Expression)obj;
+		invocationAsExpr.accept(valueCGVisitor, params);
+		if(invocationAsExpr.getType() instanceof ast.Void == false)
+			cg.pop(invocationAsExpr.getType());
+		return null;
 	}
 
 	/**
@@ -151,12 +174,19 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 	}
 
 	/**
-	 *
+	 *execute[[Return : statement -> expression]](funcDefinition) =
+	 * 	value[[expression]]()
+	 * 	<ret> expression.type.numberOfBytes() <, >
+	 * 		funcDefinition.sumaBytesLocales <, >
+	 * 		funcDefinition.sumaBytesParams
 	 *
 	 */
 	@Override
 	public Object visit(Return obj, Object params) {
-		throw new IllegalStateException();
+		obj.getExpression().accept(valueCGVisitor, params);
+		FuncDefinition fd = (FuncDefinition) params;
+		cg.ret(obj.getExpression().getType().numberOfBytes(), abs(fd.getTotalBytesLocales()), fd.getTotalBytesParams());
+		return null;
 	}
 
 	/**
@@ -177,11 +207,27 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 	}
 
 	/**
-	 *
+	 *execute [[While : statement -> expression statement*]]() =
+	 * 	int labelNumber = cg.getLabel();
+	 * 	<label> "while" + labelNumber <:>
+	 * 	value[[expression]]()
+	 * 	<jz> "endWhile" + labelNumber
+	 * 	for(Statement statement : statement*)
+	 * 		execute[[statement]]()
+	 * 	<jmp> "while" + labelNumber
+	 * 	<label> "endWhile" + labelNumber <:>
 	 *
 	 */
 	@Override
 	public Object visit(While obj, Object params) {
-		throw new IllegalStateException();
+		int numLabel = cg.getLabel();
+		cg.label("while" + numLabel);
+		obj.getExpression().accept(valueCGVisitor, params);
+		cg.jz("endWhile" + numLabel);
+		for(Statement stm : obj.getSentences())
+			stm.accept(this, params);
+		cg.jmp("while" + numLabel);
+		cg.label("endWhile" + numLabel);
+		return null;
 	}
 }
