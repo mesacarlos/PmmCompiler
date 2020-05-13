@@ -78,6 +78,11 @@ statement returns [List<Statement> ast]:
 	ID '(' (ex1=expression { params.add($ex1.ast); } (',' ex2=expression { params.add($ex2.ast); })*)? ')' ';'
     { listaReturn.add(new Invocation($ID.getLine(), $ID.getCharPositionInLine()+1, new Variable($ID.getLine(), $ID.getCharPositionInLine()+1, $ID.text), params));
     $ast = listaReturn; }
+
+    | { List<Statement> listaReturn = new ArrayList<Statement>();}
+    izq=expression lin='<=>' der=expression ';'
+    { listaReturn.add(new Swap($lin.getLine(), $lin.getCharPositionInLine()+1, $izq.ast, $der.ast));
+        $ast = listaReturn; }
 	;
 
 expression returns [Expression ast]:
@@ -135,6 +140,17 @@ vardef returns [List<VarDefinition> ast]:
     ':' tipo ';' { List<VarDefinition> returnList = new ArrayList<VarDefinition>();
     for(Variable var : lista)
         returnList.add(new VarDefinition(var.getLine(),	var.getColumn(), $tipo.ast, var.getName()));
+    $ast = returnList; }
+
+    | { List<VarDefinition> returnList = new ArrayList<VarDefinition>();
+    List<Expression> valores = new ArrayList<Expression>(); }
+    id1=ID { Variable var = new Variable($id1.getLine(), $id1.getCharPositionInLine()+1, $id1.text); }
+    ':' cor='[]' tipo '=' '{' (valor=expression {valores.add($valor.ast);})* '}' ';'
+    { returnList.add(new VarDefinition(var.getLine(),
+                        var.getColumn(),
+                        new Array($cor.getLine(), $cor.getCharPositionInLine()+1, $tipo.ast, valores.size()),
+                        var.getName(),
+                        valores));
     $ast = returnList; }
 	;
 

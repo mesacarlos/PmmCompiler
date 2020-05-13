@@ -129,6 +129,11 @@ public abstract class AbstractCGVisitor implements Visitor{
 	}
 
 	@Override
+	public Object visit(Swap obj, Object params) {
+		throw new IllegalStateException();
+	}
+
+	@Override
 	public Object visit(UnaryMinus obj, Object params) {
 		throw new IllegalStateException();
 	}

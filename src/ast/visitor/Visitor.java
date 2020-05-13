@@ -29,6 +29,7 @@ public interface Visitor {
 	public Object visit(RealLiteral obj, Object params);
 	public Object visit(Return obj, Object params);
 	public Object visit(Struct obj, Object params);
+	public Object visit(Swap obj, Object params);
 	public Object visit(UnaryMinus obj, Object params);
 	public Object visit(UnaryNot obj, Object params);
 	public Object visit(VarDefinition obj, Object params);

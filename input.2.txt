@@ -1,0 +1,37 @@
+"""
+Modificar el compilador de Pmm para añadir la posibilidad de inicializar los arrays en la definición.
+    - Solamente podran inicializarse arrays de tipo basico.
+    - Solamente podran inicializarse mediante literales.
+    - Podrán inicializarse tanto arrays globales y locales.
+"""
+
+
+w:[]double = {1.5 2.5};
+
+def right():{
+    a:[] int = {1 2 3};
+    i:int;
+    i = 0;
+
+    while i < 3:
+    {
+        print 'a','[',i,']','=',a[i],'\n';
+        if i < 2:
+            print 'w','[',i,']','=',w[i],'\n';
+        i = i + 1;
+    }
+}
+
+"""
+def wrong():{
+    a:[] int = {'a' 1};     # Compilation error
+    a:[] int = { };        # Compilation error
+    a:[] int = {b};        # Compilation error
+    a:[] int = {4+5};        # Compilation error
+}
+"""
+
+def main(): {
+    right();
+}
+

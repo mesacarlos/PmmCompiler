@@ -165,6 +165,28 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		return null;
 	}
 
+	public Object visit(Swap obj, Object params) {
+		obj.getLeft().accept(this, params);
+		obj.getRight().accept(this, params);
+
+		//Comprobamos que left y right sean lvalue
+		if(!obj.getLeft().islValue())
+			new ErrorType(obj.getLine(), obj.getColumn(), "[LValue] Error: No se puede intercambiar el valor de esta expresión.");
+		if(!obj.getRight().islValue())
+			new ErrorType(obj.getLine(), obj.getColumn(), "[LValue] Error: No se puede intercambiar el valor de esta expresión.");
+
+		//Comprobamos que los tipos sean equivalentes
+		if(!obj.getLeft().getType().equals(obj.getRight().getType()))
+			obj.getLeft().setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] Los tipos de estas expresiones no son equivalentes."));
+
+		//Comprobamos que las expresiones sean de tipo basico
+		if(!obj.getLeft().getType().isBuiltInType())
+			obj.getLeft().setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] El tipo de esta expresión no es de tipo básico."));
+		if(!obj.getRight().getType().isBuiltInType())
+			obj.getRight().setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] El tipo de esta expresión no es de tipo básico."));
+		return null;
+	}
+
 	@Override
 	public Object visit(UnaryMinus obj, Object params) {
 		obj.setlValue(false);
@@ -184,6 +206,40 @@ public class TypeCheckingVisitor extends AbstractVisitor{
 		obj.setType(obj.getExpression().getType().logic());
 		if(obj.getType() == null)
 			obj.setType(new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] No se puede negar esta expresión."));
+		return null;
+	}
+
+	@Override
+	public Object visit(VarDefinition obj, Object params) {
+		obj.getType().accept(this, params);
+
+		if(obj.getValues() != null){
+			//Comprobamos que tiene al menos 1 valor
+			if(obj.getValues().size() == 0)
+				new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] No se puede inicializar un array vacio.");
+			//Hay que inicializarlo. Por tanto, comprobamos que las expresiones que tenemos son literales del tipo del array
+			Type tipo = ((Array)obj.getType()).getType();
+			int i = 0;
+			for(Expression expr : obj.getValues()){
+				if(tipo.equals(Integer.getInstance()) && !(expr instanceof IntLiteral))
+					new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] Solo se permiten literales al inicializar un array.");
+				if(tipo.equals(Real.getInstance()) && !(expr instanceof RealLiteral))
+					new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] Solo se permiten literales al inicializar un array.");
+				if(tipo.equals(Char.getInstance()) && !(expr instanceof CharLiteral))
+					new ErrorType(obj.getLine(), obj.getColumn(), "[TypeChecking] Solo se permiten literales al inicializar un array.");
+
+				//Create assignment node and visit the node
+				IntLiteral position = new IntLiteral(obj.getLine(), obj.getColumn(), i);
+				Variable variable = new Variable(obj.getLine(), obj.getColumn(), obj.getName());
+				variable.setDefinition(obj);
+				ArrayAccess arrayAccess = new ArrayAccess(obj.getLine(), obj.getColumn(), variable, position);
+				Assignment a = new Assignment(obj.getLine(), obj.getColumn(), arrayAccess, expr);
+				a.accept(this, params);
+				//Add the node to VarDefinition to visit it inside ExecuteCGVisitor
+				obj.getAssignments().add(a);
+				i++;
+			}
+		}
 		return null;
 	}
 

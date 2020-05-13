@@ -166,6 +166,13 @@ public abstract class AbstractVisitor implements Visitor{
 	}
 
 	@Override
+	public Object visit(Swap obj, Object params) {
+		obj.getLeft().accept(this, params);
+		obj.getRight().accept(this, params);
+		return null;
+	}
+
+	@Override
 	public Object visit(UnaryMinus obj, Object params) {
 		obj.getExpression().accept(this, params);
 		return null;

@@ -2,12 +2,22 @@ package ast;
 
 import ast.visitor.Visitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VarDefinition extends AbstractDefinition {
 	private int offset;
 	private int scope;
+	private List<Expression> values;
+	private List<Assignment> assignments = new ArrayList<Assignment>();
 
 	public VarDefinition(int line, int column, Type type, String name) {
 		super(line, column, type, name);
+	}
+
+	public VarDefinition(int line, int column, Type type, String name, List<Expression> values) {
+		super(line, column, type, name);
+		this.values = values;
 	}
 
 	public void setOffset(int offset) {
@@ -24,6 +34,18 @@ public class VarDefinition extends AbstractDefinition {
 
 	public int getScope() {
 		return scope;
+	}
+
+	public List<Expression> getValues(){
+		return values;
+	}
+
+	public List<Assignment> getAssignments() {
+		return assignments;
+	}
+
+	public void setAssignments(List<Assignment> assignments) {
+		this.assignments = assignments;
 	}
 
 	@Override

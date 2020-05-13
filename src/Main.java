@@ -19,7 +19,7 @@ public class Main {
 			System.err.println("Please, pass me the input file.");
 		        return;
 		}
-		//args[0] = "labExamen.input.txt";
+
 		// create a lexer that feeds off of input CharStream
 		CharStream input = CharStreams.fromFileName(args[0]);
 		PmmLexer lexer = new PmmLexer(input);
@@ -30,6 +30,7 @@ public class Main {
 		Program ast = parser.program().ast;
 
 		//Visitors
+
 		ast.accept(new IdentificationVisitor(), null);
 		ast.accept(new TypeCheckingVisitor(), null);
 
@@ -44,15 +45,15 @@ public class Main {
 		//Generacion de código
 		CodeGenerator cg = new CodeGenerator("output.txt", args[0]);
 		ast.accept(new ExecuteCGVisitor(cg), null);
-		
+
 		// * Check errors 
 		if(ErrorHandler.getInstance().hasErrors()){
 			// * Show errors
 			ErrorHandler.getInstance().showErrors(System.err);
 		}else{
-			// * The AST is shown
-			IntrospectorModel model=new IntrospectorModel("Program", ast);
-			new IntrospectorTree("Introspector", model);
+			// This helped debugging, but now it throws StackOverflow because of VarDefinition.assignments (Only when a array initialization exists, like w:[]double = {1.5 2.5};)
+			//IntrospectorModel model=new IntrospectorModel("Program", ast);
+			//new IntrospectorTree("Introspector", model);
 		}		
 	}
 }

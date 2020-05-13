@@ -1,0 +1,47 @@
+"""
+Modificar el compilador de Pmm para añadir la sentencia SWAP que permite intercambiar el valor de dos expresiones.
+	- Ambas expresiones deberan de ser LValues.
+	- El tipo de ambas expresiones deberan de ser equivalentes entre si.
+	- Solamente podran intercambiarse expresiones de tipo basico.
+"""
+
+def right(): {
+	a,b:int;
+	c:[2]double;
+    a = 1;
+    b = 3;
+    print 'a','=',a,'\n';  # a=1
+    print 'b','=',b,'\n';  # b=3
+    a <=> b;
+    print 'a','=',a,'\n';  # a=3
+    print 'b','=',b,'\n';  # b=1
+
+    c[0] = 1.5;
+    c[1] = 2.5;
+    print c[0],'\n';        # 1.5
+    print c[1],'\n';        # 2.5
+    c[0] <=> c[1];
+    print c[0],'\n';        # 2.5
+    print c[1],'\n';        # 1.5
+}
+
+"""
+def wrong(): {
+    a:int;
+    b:double;
+    c:[1]double;
+    a = 1;
+    b = 3.5;
+    a <=> b;                # Compilation error
+    b <=> a;                # Compilation error
+    a <=> (int)b;           # Compilation error
+    c[0] <=> b;
+    c[0] <=> a;             # Compilation error
+    c <=> c;                # Compilation error
+}
+"""
+
+def main(): {
+    right();
+}
+	

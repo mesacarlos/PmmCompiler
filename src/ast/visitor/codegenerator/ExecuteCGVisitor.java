@@ -59,7 +59,10 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 	public Object visit(FuncDefinition obj, Object params) {
 		cg.line(obj.getLine());
 		cg.label(obj.getName());
-		cg.enter(abs(obj.getTotalBytesLocales()));
+		cg.enter(abs(obj.getTotalBytesLocales())); //Allocate space for local variables
+		for(VarDefinition varDef : obj.getVariables())
+			for(Assignment asgn : varDef.getAssignments())
+				asgn.accept(this, params);
 		for(Statement stm : obj.getSentences())
 			stm.accept(this, obj);
 
@@ -190,19 +193,43 @@ public class ExecuteCGVisitor extends AbstractCGVisitor{
 	}
 
 	/**
+	 * execute[[Swap : statement -> left right]]() =
+	 *  address[[right]]
+	 * 	value[[left]]
+	 * 	address[[left]]
+	 * 	value[[right]]
+	 * 	<store>left.getType().suffix()
+	 * 	<store>right.getType().suffix()
+	 *
+	 */
+	@Override
+	public Object visit(Swap obj, Object params) {
+		obj.getRight().accept(addressCGVisitor, params);
+		obj.getLeft().accept(valueCGVisitor, params);
+		obj.getLeft().accept(addressCGVisitor, params);
+		obj.getRight().accept(valueCGVisitor, params);
+		cg.store(obj.getLeft().getType());
+		cg.store(obj.getRight().getType());
+		return null;
+	}
+
+	/**
 	 *execute [[ VarDefinition : definition -> type ]]() =
 	 * 	No hay que hacer nada para las variables globales
 	 *
 	 */
 	@Override
 	public Object visit(VarDefinition obj, Object params) {
-		//No es necesario realizar nada para las variables globales
+		//Global variables do not require anything special
 		if(obj.getType().equals(Char.getInstance()))
 			cg.comment("char " + obj.getName() + "(offset " + obj.getOffset() + ")");
 		if(obj.getType().equals(Integer.getInstance()))
 			cg.comment("int " + obj.getName() + "(offset " + obj.getOffset() + ")");
 		if(obj.getType().equals(Real.getInstance()))
 			cg.comment("real " + obj.getName() + "(offset " + obj.getOffset() + ")");
+
+		for(Assignment a : obj.getAssignments())
+			a.accept(this, params);
 		return null;
 	}
 
